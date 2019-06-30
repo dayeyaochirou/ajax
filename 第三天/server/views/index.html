@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>模板引擎的使用</title>
+  <style type="text/css">
+    
+  </style>
+</head>
+<body>
+  <input type="button" value="获取学生数据">
+  <table border="1">
+    <thead>
+      <th>姓名</th>
+      <th>别称</th>
+      <th>年龄</th>
+      <th>专业</th>
+      <th>地址</th>
+    </thead>
+    <tbody>
+      
+    </tbody>
+  </table>
+  <script src="/assets/js/jquery-1.12.2.js"></script>
+  <script src="/assets/js/template.js"></script>
+  <script type="text/template" id="listTmp">
+    {{each data as val key}}
+      <tr>
+        <td>{{val.name}}</td>
+        {{if val.gender=='男'}}
+         <td>靓仔</td>
+         {{else}}
+         <td>靓女</td>
+         {{/if}}
+        <td>{{val.age}}</td>
+        <td>{{val.zhuanye}}</td>
+        <td>{{val.address}}</td>
+      </tr>
+    {{/each}}
+  </script>
+  <script>
+    // 1. 给按钮注册事件
+    $('input').on('click',function(){
+
+      // 2. 发送ajax请求
+      // $.ajax({
+      //   type:'get',
+      //   url:'/getStudentsJSON',
+      //   dataType:'json',
+      //   success:function(){
+
+      //   }
+      // })
+
+      $.get('/getStudentsJSON',function(res){
+         // 发送请求成功后,要根据响应回来的数据进行后续处理
+        // template有两个参数 第1个参数是模板的id  第2个参数是要渲染的数据 必须是对象类型
+        //  var htmlStr = template('listTmp',{})
+         var htmlStr = template('listTmp',res)
+         console.log(htmlStr);
+         $('tbody').html(htmlStr)
+ 
+        //  console.log(res);
+        //  var str = ''
+        //  var data = res.data;
+        //  var arr = []
+        //  for(var i=0;i<data.length;i++){
+        //    str = `<tr> 
+        //       <td>${data[i].name}</td>
+        //       <td>${data[i].gender=='男'?'小哥哥':'小姐姐'}</td>
+        //       <td>${data[i].age}</td>
+        //       <td>${data[i].zhuanye}</td>
+        //       <td>${data[i].address}</td>
+        //     </tr>`
+        //     arr.push(str)
+        //  }
+        //  $('tbody').html(arr.join(''))
+        },'json')
+    })
+
+    /**
+     * 原始方式接近数据的弊端:
+     * 1. 数据的拼接比较麻烦 
+     * 2. 业务逻辑不方便进行处理  遇到判断或是循环则无法处理
+     **/ 
+  </script>
+</body>
+</html>

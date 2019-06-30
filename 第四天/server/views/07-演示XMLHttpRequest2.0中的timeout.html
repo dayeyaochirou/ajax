@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>XMLHttpRequest2.0的超时演示</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      line-height: 200px;
+      font-size: 80px;
+      text-align: center;
+      background-color: orange;
+    }
+  </style>
+</head>
+<body>
+  <input type="button" value="获取验证码">
+  <div class="box">0</div>
+  <script>
+    // 1. 获取标签对象
+    var btn = document.querySelector('input')
+    var box = document.querySelector('.box')
+    var num = 0
+    setInterval(function(){
+      num++
+      box.innerHTML = num
+    }, 1000);
+    // 2. 给按钮注册事件
+    btn.onclick = function () {
+      
+      // 3. 创建异步对象
+      var xhr = new XMLHttpRequest()
+      // 4. 设置请求行
+      xhr.open('get','http://127.0.0.1:3001/getDelayCode?mobile=13012345678')
+      // 5. 设置请求头
+
+      // 添加超时时间
+      xhr.timeout = 3000
+      xhr.ontimeout = function () {
+        console.log('请求超时,请重试...');
+      }
+      
+      // 6. 设置请求体
+      xhr.send(null)
+      // 7. 监视异步对象的状态
+      xhr.onreadystatechange = function () {
+        if(xhr.status==200&& xhr.readyState==4){
+          console.log(xhr.responseText);
+        }
+      }
+    }
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>表单注册</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F7F7F7;
+        }
+
+        ul {
+            margin: 0;
+            padding: 50px;
+            list-style: none;
+        }
+
+        .register {
+            width: 800px;
+            margin: 50px auto;
+            background-color: #FFF;
+            border: 1px solid #CCC;
+            border-radius: 5px;
+        }
+
+        li {
+            display: flex;
+            margin: 20px 0;
+        }
+
+        label,
+        input {
+            display: block;
+            float: left;
+            height: 46px;
+            font-size: 24px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        label {
+            width: 200px;
+            line-height: 46px;
+            margin-right: 30px;
+            text-align: right;
+        }
+
+        input {
+            width: 320px;
+            padding: 8px;
+            line-height: 1;
+            outline: none;
+            position: relative;
+        }
+
+        input.code {
+            width: 120px;
+        }
+
+        input.verify {
+            width: 190px;
+            margin-left: 10px;
+        }
+
+        input.disabled {
+            background-color: #CCC !important;
+        }
+
+        input[type=button] {
+            border: none;
+            color: #FFF;
+            background-color: #E64145;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tips {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            text-align: center;
+        }
+
+        .tips p {
+            min-width: 300px;
+            max-width: 400px;
+            line-height: 40px;
+            margin: 0 auto;
+            color: #FFF;
+            display: none;
+            background-color: #C91623;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register">
+        <form id="ajaxForm">
+            <ul>
+                <li>
+                    <label for="">用户名</label>
+                    <input type="text" name="name" class="name">
+                </li>
+                <li>
+                    <label for="">请设置密码</label>
+                    <input type="password" name="pass" class="pass">
+                </li>
+                <li>
+                    <label for="">请确认密码</label>
+                    <input type="password" name="repass" class="repass">
+                </li>
+                <li>
+                    <label for="">验证手机</label>
+                    <input type="text" name="mobile" value="" class="mobile">
+                </li>
+                <li>
+                    <label for="">短信验证码</label>
+                    <input type="text" name="code" class="code">
+                    <input type="button" value="获取验证码" class="verify">
+                </li>
+                <li>
+                    <label for=""></label>
+                    <!-- <input type="button" class="submit " value="立即注册"> -->
+                    <input type="submit" class="submit " value="立即注册">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- 提示信息 -->
+    <div class="tips">
+        <p>用户名不能为空---</p>
+    </div>
+</body>
+
+</html>
+<script src="/assets/js/jquery-1.12.2.js"></script>
+<script>
+    //给获取验证码的按钮注册时间
+    $(".verify").on('click', function () {
+        $.ajax({
+            type: 'get',
+            url: 'http://127.0.0.1:3001/getCode',
+            // 传入内容对象--手机号码
+            data: {
+                mobile: $('.mobile').val()
+            },
+            // 设置超时时间,实际项目中服务器有可能会卡
+            timeout: 3000,
+            // 在发送之前需要作出验证,该方法写在请求发送之前执行的函数中
+            beforeSend: function () {
+                // 定义正则表达式,严格按照手机号码应该有的样子
+                var number = /^1[3579]\d{9}$/;
+                //验证用户输入手机号是否符合上述正则表达式,不符合则不发送请求
+                // test是测试的意思,返回一个布尔值,用法是正则表达式点测试对象
+                if (!number.test($(".mobile").val())) {
+                    // 不符合要求,在表单上方提示文本
+                    //fadein是动画渐入---delay是提示框停留时间
+                    $('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('手机号输入有误,请重新输入');
+                    //return false 退出函数
+                    return false;
+                }
+                //如果符合正则表达式,进入后面的环节,点击之后应该立刻禁用按钮
+                // 给按钮添加变成灰色的类名
+                $('verify').addClass('.disabled');
+                // 设置定时器
+                var num = 6;
+                var timeId = setInterval(function () {
+                    num--;
+                    $('.verify').val(num + "秒后重新发送");
+                    // 在num等于0的瞬间清除定时器,并还原按钮本来的样子
+                    if (num == 0) {
+                        clearInterval(timeId)
+                        $('.verify').removeClass('disabled').val('获取验证码')
+                    }
+                }, 1000);
+            },
+            success: function (res) {
+                console.log('请求成功了', res);
+            },
+            // 请求失败(爱瑞儿)
+            error: function () {
+                $('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('请求超时,请重试');
+            }
+        })
+    })
+
+    // 给用户名文本框注册失去焦点的事件
+    $('.name').on('blur', function () {
+        // 获取用户名
+        var name = $('.name').val();
+        $.ajax({
+            type: 'get',
+            url: 'http://127.0.0.1:3001/validateName',
+            data: {
+                userName: name
+            },
+            // 在data发送请求执行之前,先验证一下是否为空,(以后还可以添加查询一下是否包含不合法的字眼)
+            beforeSend: function () {
+                //trim是去掉空格的意思
+                if (!$.trim(name)) {
+                    $('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('用户名不可为空')
+                    return false
+                }
+            },
+            //将响应回来的字符串数据转换成json对象
+            dataType: 'json',
+            success: function (res) {
+                // 如果请求成功则会执行后面的代码,与后端的数据进行比对,查询是否可用,无论与否,都将返回的结果res.msg添加在提示用户的界面中
+                if (res.code == 200) {
+                    $('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+                } else {
+                    $('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+                }
+            }
+        })
+    })
+
+    //这是新学的哦!!!!给表单注册一个submit事件
+    $('#ajaxForm').on('submit', function (event) {
+        // 首先要阻止submit的默认事件(一股脑全提交到url里去)发生
+        event.preventDefault();
+        //然后再让它执行自己的ajax请求
+        $.ajax({
+            type: "post",
+            url: 'http://127.0.0.1:3001/register',
+
+
+            data: $(this).serialize()
+        })
+    })
+</script>

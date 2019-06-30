@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/css/fruits.css">
+    <style>
+        .container ul > li {
+            float: none;
+            width: 100%;
+            text-align: center;
+        }
+        .container ul > li img {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        传智网上水果超市
+    </div>
+    <div class="container">
+        <p>
+            <a href="#">水果</a>
+            <a href="#">干果</a>
+            <a href="#">蔬菜</a>
+        </p>
+        <ul>
+            
+        </ul>
+    </div>
+    <div class="footer">
+        传智播客 版权所有
+    </div>
+</body>
+</html>
+<script src="/assets/js/jquery-1.12.2.js"></script>
+<script src="/assets/js/template.js"></script>
+<script type="text/template" id="detailTmp">
+   <li>
+       <img src="{{src}}" alt="">
+       <p>{{name}}</p>
+   </li>
+</script>
+<script>
+   function convertToObj(str) {
+        str = str.slice(1) // 先将?截掉
+        var arr = str.split('&')
+        // console.log(arr);
+        // 循环遍历数组,获取每一项,再以'='切割
+        var obj = {}
+        arr.forEach(function (item, index) {
+            var temp = item.split('=') // 将遍历到的数据以=再次切割
+            // console.log(temp);
+            obj[temp[0]] = temp[1]  //  可以使用.或[]的方式给对象添加属性
+            // console.log(obj);
+        })
+        return obj; // 将转换好的数据返回
+    }
+
+   // 1. 获取url地址栏中的id
+   var search = location.search; 
+
+   // 2. 获取对应的id
+   var id = convertToObj(search).id;
+
+   // 3. 发送ajax请求
+   $.ajax({
+       type:'get',
+       url:'http://127.0.0.1:3001/getOneFruit',
+       data:{
+           id:id
+       },
+       dataType:'json',
+       success:function(res){
+        //  console.log(res);
+        if(res.code==200){
+            var htmlStr = template('detailTmp',res.data) // 要把与数据联系最直接的对象传入进来
+            $('ul').html(htmlStr)
+        }
+       }
+   })
+</script>

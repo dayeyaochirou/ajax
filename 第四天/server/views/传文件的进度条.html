@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>演示上传的进度条</title>
+  <style>
+    .box {
+      height: 100px;
+      line-height: 100px;
+      text-align: center;
+      /* margin: 0 auto; */
+      width: 0;
+      background-color: orangered;
+      font-size:80px;
+    }
+  </style>
+</head>
+<body>
+  <input type="file"><br/>
+  <div class="box"></div>
+  <script src="/assets/js/jquery-1.12.2.js"></script>
+  <script>
+    // 1. 注册change事件
+    $('input').on('change',function(){
+
+      // 2. 准备上传的数据
+      var data = new FormData()
+      data.append('avatar',this.files[0])
+
+      // 3. 创建异步对象
+      var xhr = new XMLHttpRequest()
+
+      // 4. 设置请求行
+      xhr.open('post','http://127.0.0.1:3001/uploadFile')
+      // 5. 设置请求头
+      // 因为上传的是二进制数据,所以不需要设置请求头 也就是说数据不需要进行urlencoded编码
+
+      // 在发送数据之前,可以给对象注册一个监视上传进度的事件
+      xhr.upload.onprogress = function (event) {
+        // 这个事件会触发很多次,因为文件比较大的话,是分块进行上传
+        // event.loaded  表示已经上传文件的大小
+        // event.total   表示文件整体的大小
+        // console.log(event.loaded,event.total);
+        var percent = Math.floor((event.loaded / event.total)*100) + '%'
+        $('.box').css('width',percent)
+        $('.box').html(percent)  // 将上传的进度值给box标签间显示出来
+      }
+
+      // 6. 设置请求体
+      xhr.send(data)
+      // 7. 监视异步对象的状态变化 
+      xhr.onreadystatechange = function () {
+        if(xhr.status==200&&xhr.readyState==4){
+          console.log(xhr.responseText);
+        }
+      }
+    })
+    /**
+     * 1. 使用FormData上传文件的时候，会将文件转换成二进制数据
+     * 2. 使用ajax上传的时候,如果是post请求,内部默认会使用请求头来设置urlendcoded编码
+     * 3. 二进制数据上传的时候，不需要进行urlencoded编码  contentType:false
+     * 4. ajax内部底层也不需要进行字符串拼接   processData:false
+     * 5. 其它方式都一样
+     **/
+  </script>
+</body>
+</html>

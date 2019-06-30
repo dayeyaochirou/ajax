@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>请求百度天气接口</title>
+</head>
+
+<body>
+  <input type="button" value="获取天气数据">
+  <script src="./server/assets/js/jquery-1.12.2.js"></script>
+  <script>
+    // 1. 单击按钮
+    $('input').on('click', function () {
+      // 2. 发送ajax请求
+      $.ajax({
+        type: 'get',
+        url: 'http://api.map.baidu.com/telematics/v3/weather',
+        data: {
+          ak: 'zVo5SStav7IUiVON0kuCogecm87lonOj',
+          location: '北京',
+          output: 'json'   // 让百度天气服务器返回json形式的数据
+        },
+        dataType: 'jsonp',  // 开启跨域,浏览器允许访问127.0.0.1这个IP之外的服务器的地址
+        success: function (res) {
+          console.log(res);
+          console.log(typeof res);
+        }
+      })
+    })
+  </script>
+</body>
+
+</html>

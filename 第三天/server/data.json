@@ -1,0 +1,82 @@
+[
+  {
+    "userName": "tom",
+    "userPwd": "123"
+  },
+  {
+    "userName": "aaa",
+    "userPwd": "123"
+  },
+  {
+    "userName": "AB",
+    "userPwd": "123"
+  },
+  {
+    "userName": "小黑",
+    "userPwd": "123"
+  },
+  {
+    "userName": "小苏",
+    "userPwd": "123"
+  },
+  {
+    "userName": "aaaaaa",
+    "userPwd": "123"
+  },
+  {
+    "name": "jerry",
+    "pass": "123",
+    "repass": "123",
+    "mobile": "13012345678",
+    "code": "132456"
+  },
+  {
+    "name": "john",
+    "pass": "123",
+    "repass": "123",
+    "mobile": "13012345678",
+    "code": "123456"
+  },
+  {
+    "name": "johnn",
+    "pass": "123",
+    "repass": "123",
+    "mobile": "13012345678",
+    "code": "123"
+  },
+  {
+    "name": "",
+    "pass": "",
+    "repass": "",
+    "mobile": "",
+    "code": ""
+  },
+  {
+    "name": "",
+    "pass": "",
+    "repass": "",
+    "mobile": "",
+    "code": ""
+  },
+  {
+    "name": "",
+    "pass": "",
+    "repass": "",
+    "mobile": "",
+    "code": ""
+  },
+  {
+    "name": "",
+    "pass": "",
+    "repass": "",
+    "mobile": "",
+    "code": ""
+  },
+  {
+    "name": "",
+    "pass": "",
+    "repass": "",
+    "mobile": "",
+    "code": ""
+  }
+]

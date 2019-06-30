@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>获取JSON形式的数据</title>
+</head>
+
+<body>
+    <input type="button" value="获取json数据">
+    <table border="1">
+        <thead>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>专业</th>
+            <th>地址</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>张三</td>
+                <td>男</td>
+                <td>18</td>
+                <td>前端与移动开发</td>
+                <td>天河区</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        // 1. 获取要操作的对象
+        var btn = document.querySelector('input')
+
+        // 2. 给事件源注册单击事件
+        btn.onclick = function () {
+            // 3. 创建异步对象
+            var xhr = new XMLHttpRequest()
+
+            // 4. 设置请求行
+            // xhr.open('get','http://127.0.0.1:3001/getStudentsJSON')
+            xhr.open('get', '/getStudentsJSON')
+            // 5. 设置请求头
+
+            // 6. 设置请求体
+            xhr.send(null) // 如果没有数据发送的话,一定要写一个null
+            // 7. 监视异步对象的状态变化
+            xhr.onreadystatechange = function () {
+                if (xhr.status == 200 && xhr.readyState == 4) {
+                    // console.log(xhr.responseText);
+                    // console.log(typeof xhr.responseText);
+                    // 定义变量result接收 responseText,并通过JSON解析
+                    var result = JSON.parse(xhr.responseText)
+                    // console.log(result);
+                    // console.log(typeof result);
+                    render(result)
+                }
+            }
+        }
+
+        function render(result) {
+            // 通过JSON解析之后的responseText值为一个对象
+            // 所需数据实际上是在responseText对象下的data属性下,,data的意思是值为,,,而data的内容是所需的数组
+            var arr = result.data;
+            var str = ''
+            var strArr = []
+            for (var i = 0; i < arr.length; i++) {
+                str = `
+                <tr>
+                    <td>${arr[i].name}</td>
+                    <td>${arr[i].gender}</td>
+                    <td>${arr[i].age}</td>
+                    <td>${arr[i].zhuanye}</td>
+                    <td>${arr[i].address}</td>
+                 </tr>
+                `;
+                strArr.push(str)
+            }
+            document.querySelector('tbody').innerHTML = strArr.join('')
+        }
+    </script>
+</body>
+
+</html>

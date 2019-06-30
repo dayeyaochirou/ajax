@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>获取XML形式的数据</title>
+</head>
+
+<body>
+  <input type="button" value="获取json数据">
+  <table border="1">
+    <thead>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>专业</th>
+      <th>地址</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>张三</td>
+        <td>男</td>
+        <td>18</td>
+        <td>前端与移动开发</td>
+        <td>天河区</td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    // 1. 获取要操作的对象
+    var btn = document.querySelector('input')
+
+    // 2. 给事件源注册单击事件
+    btn.onclick = function () {
+      // 3. 创建异步对象
+      var xhr = new XMLHttpRequest()
+
+      // 4. 设置请求行
+      // xhr.open('get','http://127.0.0.1:3001/getStudentsJSON')
+      xhr.open('get', '/getStudentsXML')
+      // 5. 设置请求头
+
+      // 6. 设置请求体
+      xhr.send(null) // 如果没有数据发送的话,一定要写一个null
+      // 7. 监视异步对象的状态变化
+      xhr.onreadystatechange = function () {
+        if (xhr.status == 200 && xhr.readyState == 4) {
+          console.log(xhr.responseXML);// 对于后端服务器返回来的XML格式的字符串,可以使用responseXML来接收,接收之后会将XML格式的字符串转换成类DOM对象,意味着可以使用原来操作DOM的方式来操作这个对象
+          // console.log(typeof xhr.responseXML);
+          var items = xhr.responseXML.querySelector('items').children
+          console.log(items);
+          render(items);
+        }
+      }
+    }
+
+    function render(result) {
+      var str = ''
+      var strArr = []
+      for (var i = 0; i < result.length; i++) {
+        var name = result.querySelector("name")
+        var gender = result.querySelector("gender")
+        var age = result.querySelector("age")
+        var zhuanye = result.querySelector("zhuanye")
+        var address = result.querySelector("address")
+        str = '<tr>' +
+          '<td> ' + name + '</td >' +
+          '<td>' + gender + '</td>' +
+          '<td>' + age + '</td>' +
+          '<td>' + zhuanye + '</td>' +
+          '<td>' + address + '</td>' +
+          '</tr>';
+        strArr.push(str)
+      }
+      document.querySelector('tbody').innerHTML = strArr.join('')
+    }
+  </script>
+</body>
+
+</html>
