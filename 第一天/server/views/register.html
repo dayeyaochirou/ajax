@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <form>
+        用户名: <input type="text" name="userName" id="userName"> <span></span><br>
+        密　码: <input type="text" name="userPwd" id="userPwd"><br>
+        <input type="button" id="btn" value="点击注册">
+    </form>
+
+    <script>
+        var userName = document.querySelector("#userName");
+        // var userPwd = document.querySelector("#userPwd");
+        // var btn = document.querySelector('#btn');
+        // var span = document.querySelector('span');
+        userName.onblur = function () {
+            var xhr = new XMLHttpRequest();
+            xhr.open('get', 'http://127.0.0.1:3001/validate?userName=' + this.value);
+            xhr.send(null)
+            xhr.onreadystatechange = function () {
+                if (xhr.status == 200 && xhr.readyState == 4) {
+                    // console.log(xhr.responseText);
+                    userName.nextElementSibling.innerHTML = xhr.responseText;
+                }
+            }
+        }
+
+        // // 注册用户名部分
+        btn.onclick = function () {
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', 'http://127.0.0.1:3001/submit');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('userName=' + userName.value + '&userPwd=' + userPwd.value);
+            xhr.onreadystatechange = function () {
+                if (xhr.status == 200 && xhr.readyState == 4) {
+                    console.log(xhr.responseText);
+                    var obj = JSON.parse(xhr.responseText);
+                    console.log(obj);
+                    fn(obj)
+                }
+            }
+        }
+        function fn(res) {
+            if (res.code == 200) {
+                alert(res.msg)
+                userName.value = ''
+                userPwd.value = ''
+                span.innerHTML = ''
+            }
+        }
+    </script>
+</body>
+
+</html>
