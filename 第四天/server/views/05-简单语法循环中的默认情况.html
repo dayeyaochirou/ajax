@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>模板引擎的简洁语法</title>
+</head>
+<body>
+  <input type="button" value="按钮">
+  <table border="1">
+    <thead>
+      <th>索引</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>专业</th>
+      <th>地址</th>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+  <script src="/assets/js/jquery-1.12.2.js"></script>
+  <script src="/assets/js/template.js"></script>
+  <script type="text/template" id="listTmp">
+    {{each data}}
+      <tr>
+        <td>{{$index}}</td>
+        <td>{{$value.name}}</td>
+        {{if $value.gender=='男' }}
+        <td>靓仔</td>
+        {{ else }}
+          <td>靓女</td>
+        {{/if}}  
+        <td>{{$value.age}}</td>
+        <td>{{$value.zhuanye}}</td>
+        <td>{{$value.address}}</td>
+      </tr>
+     {{/each}} 
+  </script>
+  <script>
+    // 1. 获取按钮
+    var btn = document.querySelector('input')
+
+    // 2. 给事件源注册事件
+    btn.onclick = function () {
+
+      // 3. 发送ajax请求
+      $.ajax({
+        type: 'get',
+        url: '/getStudentsJSON',
+        dataType: 'json',
+        success: function (res) {
+          if (res.code == 100) {
+            console.log(res);
+            var htmlStr = template('listTmp', res)
+            console.log(htmlStr);
+            $('tbody').html(htmlStr)
+          }
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>

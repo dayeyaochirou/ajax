@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+  <items>
+    <item>
+    <!-- 这是tom对象的数据 -->
+      <name>tom</name>
+      <age>18</age>
+      <sex> &gt;男</sex>
+      <score>99</score>
+      <phone></phone>
+    </item>
+    <item>
+      <name>rose</name>
+      <age>19</age>
+      <sex>女</sex>
+      <score>98</score>
+    </item>
+  </item>
+</root>

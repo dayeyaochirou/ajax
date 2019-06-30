@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>演示$.get或$.post的使用</title>
+</head>
+<body>
+  <input type="button" value="发送请求">
+  <script src="/assets/js/jquery-1.12.2.js"></script>
+  <script>
+    $('input').on('click',function () {
+      // $.get('/getStudentsJSON',function(res){
+      //   console.log(res);
+      //   console.log(typeof res);
+      // },'json')
+
+      $.post('/getStudentsJSON', function (res) {
+        console.log(res);
+        console.log(typeof res);
+        // 将数据渲染到页面
+      }, 'json')
+    })
+
+    /**
+     * $.get  $.post两个方法的参数是一样的，只有四个
+     * 1. url         服务器端的目标地址
+     * 2. data        提交给服务器的数据
+     * 3. callback    成功后的回调
+     * 4. dataType    将服务端的数据如何解析
+     * 
+     * 
+     * */
+  </script>
+</body>
+</html>

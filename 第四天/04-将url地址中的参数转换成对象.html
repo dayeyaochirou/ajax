@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>将url地址中的参数转换成对象</title>
+</head>
+<body>
+  <script>
+    var search = "?id=2&name=tom&age=20&address=aaa"
+    // {
+    //   id:1,
+    //   name:'tom',
+    //   age:20
+    // }
+
+    function convertToObj(str){
+      str = str.slice(1) // 先将?截掉
+      var arr = str.split('&')
+      // console.log(arr);
+      // 循环遍历数组,获取每一项,再以'='切割
+      var obj = {}
+      arr.forEach(function(item,index){
+        var temp = item.split('=')
+        // console.log(temp);
+        obj[temp[0]] = temp[1]  //  可以使用.或[]的方式给对象添加属性
+        // console.log(obj);
+      })
+      return obj;
+    }
+
+    convertToObj(search)
+  </script>
+</body>
+</html>

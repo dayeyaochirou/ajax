@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>复习之前的一些方法</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 300px;
+      background-color: blue;
+    }
+    .demo {
+      color: red;
+      font-size:30px;
+    }
+  </style>
+</head>
+<body>
+  <input type="button" value="添加类">
+  <input type="button" value="删除类">
+  <input type="button" value="判断类">
+  <input type="button" value="切换类">
+  <div class="box">复习jQuery</div>
+  <script src="./server/assets/js/jquery-1.12.2.js"></script>
+  <script>
+    // 单击第1个按钮，要添加类
+   $('input:first').on('click',function name(params) {
+     $('.box').addClass('demo')
+   })
+   $('input:eq(1)').on('click',function(){
+     $('.box').removeClass('demo')
+   })
+
+   $('input:eq(2)').on('click',function(){
+     var b = $('.box').hasClass('demo')
+     console.log(b);
+   })
+   $('input:last').on('click',function(){
+     $('.box').toggleClass('demo')
+   })
+   /**
+    * 判断类样式 
+    * addClass()   添加类
+    * removeClass()   删除类
+    * hasClass()      判断类      
+    * toggleClass()   切换类
+    **/
+  </script>
+</body>
+</html>

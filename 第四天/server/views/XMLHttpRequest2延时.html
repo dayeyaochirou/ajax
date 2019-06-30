@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>XMLHttpRequest2.0的超时演示</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      line-height: 200px;
+      font-size: 80px;
+      text-align: center;
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="button" value="获取验证码">
+  <div class="box">0</div>
+  <script>
+    var btn = document.querySelector("input");
+    var box = document.querySelector(".box");
+    var num = 0;
+    setInterval(function () {
+      num++;
+      box.innerHTML = num;
+    }, 1000);
+    btn.onclick = function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'http://127.0.0.1:3001/getDelayCode?mobile=13012345678')
+      xhr.timeout = 3000;
+      xhr.ontimeout = function () {
+        console.log('请求超时,请重试...');
+      }
+      xhr.send(null)
+      xhr.onreadystatechange = function () {
+        if (xhr.status == 200) {
+          if (xhr.readyState == 4) {
+            console.log(xhr.responseText);
+          }
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>表单注册</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #F7F7F7;
+		}
+
+		ul {
+			margin: 0;
+			padding: 50px;
+			list-style: none;
+		}
+
+		.register {
+			width: 800px;
+			margin: 50px auto;
+			background-color: #FFF;
+			border: 1px solid #CCC;
+			border-radius: 5px;
+		}
+
+		li {
+			display: flex;
+			margin: 20px 0;
+		}
+		
+		label, input {
+			display: block;
+			float: left;
+			height: 46px;
+			font-size: 24px;
+			box-sizing: border-box;
+			color: #333;
+		}
+
+		label {
+			width: 200px;
+			line-height: 46px;
+			margin-right: 30px;
+			text-align: right;
+		}
+
+		input {
+			width: 320px;
+			padding: 8px;
+			line-height: 1;
+			outline: none;
+			position: relative;
+		}
+
+		input.code {
+			width: 120px;
+		}
+
+		input.verify {
+			width: 190px;
+			margin-left: 10px;
+		}
+
+		input.disabled {
+			background-color: #CCC !important;
+		}
+
+		input[type=button] {
+			border: none;
+			color: #FFF;
+			background-color: #E64145;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.tips {
+			position: fixed;
+			top: 0;
+			width: 100%;
+			height: 40px;
+			text-align: center;
+		}
+
+		.tips p {
+			min-width: 300px;
+			max-width: 400px;
+			line-height: 40px;
+			margin: 0 auto;
+			color: #FFF;
+			display: none;
+			background-color: #C91623;
+		}
+	</style>
+</head>
+<body>
+	<div class="register">
+		<form id="ajaxForm">
+			<ul>
+				<li>
+					<label for="">用户名</label>
+					<input type="text" name="name" class="name">
+				</li>
+				<li>
+					<label for="">请设置密码</label>
+					<input type="password" name="pass" class="pass">
+				</li>
+				<li>
+					<label for="">请确认密码</label>
+					<input type="password" name="repass" class="repass">
+				</li>
+				<li>
+					<label for="">验证手机</label>
+					<input type="text" name="mobile" value="" class="mobile">
+				</li>
+				<li>
+					<label for="">短信验证码</label>
+					<input type="text" name="code" class="code">
+					<input type="button" value="获取验证码" class="verify">
+				</li>
+				<li>
+					<label for=""></label>
+					<input type="button" class="submit " value="立即注册">
+				</li>
+			</ul>
+		</form>
+	</div>
+	<!-- 提示信息 -->
+	<div class="tips">
+		<p>用户名不能为空---</p>
+	</div>
+</body>
+</html>
+<script src="/assets/js/jquery-1.12.2.js"></script>
+<script>
+	// 1.获取手机验证码
+	// 1.1 给获取验证码的按钮注册事件
+	$('.verify').on('click',function () {
+		// console.log(123);
+		// 1.5 阻止请求的重复发送
+		//  判断是否有disabled类,如果有说明正在倒计时,如果没有说明不在倒计时中
+		if($(this).hasClass('disabled')){
+			return // 阻止代码的向下执行
+		}
+		// 1.2 发送ajax请求
+		$.ajax({
+			type:'get',     // 请求方式
+			// url:'/getCode',  // 请求的目标地址
+			url:'/getDelayCode',  // 请求的目标地址   延迟5秒后响应回验证码
+			data:{
+				mobile:$('.mobile').val()  // 获取输入的手机号码
+			},
+			timeout:3000, // 设置超时时间,也就是说我只等待3秒,如果3秒内没有响应回来数据,我就认为请求超时
+			beforeSend:function(){
+				// 1.3 真正发送请求之前的业务验证
+				// 这个函数是在请求之前执行的,先执行这个函数,再执行发送send
+				// 可以在此函数当中做一些业务处理或验证
+				var reg = /^13\d{9}$/;
+				if(!reg.test($('.mobile').val())){
+					// 手机号不合法,没有必要向后端服务器发送请求
+					// alert('用户名不合法,请重新检查后输入')
+					console.log(456);
+					// 设置手机号码的不合法的提示
+					$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('手机号不合法,请重新检查后输入')
+					return false; // 用来阻止请求的发送
+				}
+				//1.4 设置按钮的灰色禁用状态
+				//  如果手机号码是合法的,在发送请求之前,应该让按钮变成灰色禁用状态
+				$('.verify').addClass('disabled')
+				var num = 6
+
+				// 1.6 倒计时的设置
+			var timeId = setInterval(function(){
+					num--
+					$('.verify').val(num + '秒后重新发送')  // 给获取验证码按钮重新赋值
+					if(num==0){
+						clearInterval(timeId)
+							$('.verify').removeClass('disabled').val('获取验证码') //  将获取验证码的按钮恢复为原状
+					}
+				}, 1000);
+			},
+			success:function(res){
+				console.log('请求成功了',res);
+			},
+			error:function(){
+				// console.log('请求失败了...');
+				$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('请求超时,请等一会儿再重试...')
+			}
+		})
+	})
+	/**
+	 * 1. 给获取验证码的按钮注册事件
+	 * 2. 发送ajax请求
+	 * 3. 在真正的发送请求之前要进行手机号码的验证  beforeSend里面验证
+	 * 4. 当发送了一次请求之后,要进行倒计时,在倒计时期间,不可以重复单击按钮,也就是单击按钮是无效的
+	 * 5. 需要给按钮添加一个类,但是这个类仅仅是一个灰色状态
+	 * 6. 可以根据这个disabled类来判断是否是倒计时阶段  如果有这个类说明是倒计时中,如果没有这个类说明是第1次发请求或倒计时结束
+	 * 
+	 * */
+
+	 // 2. 验证用户名
+	 /**
+		* 1. 给用户名文本框注册事件,当失去焦点就立即发送ajax请求
+	  * 2. 发送请求的时候需要获取输入的数据
+		* 3. 真正的发送请求之前要对用户输入的数据进行验证,如果为空则不需要发送请求 在beforeSend
+		* 4. 如果不合法要提示用户
+		* 5. 如果合法也要提示用户
+		*/
+	 // 2.1 给用户名文本框注册失去焦点的事件
+	 $('.name').on('blur',function(){
+
+		// 2.2 获取用户输入的用户名
+		var name = $('.name').val()
+
+		// 2.3 发送ajax请求
+		$.ajax({
+			type:'get',
+			url:'http://127.0.0.1:3001/validateName',
+			data:{
+				userName:name
+			},
+			beforeSend:function(){
+				// 在这个函数当中进行业务处理或验证,验证用户名是否合法，是否为空
+				// if($.trim(name)==''){
+				if(!$.trim(name)){
+					$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('用户名不合法,请重新输入')
+					return false
+				}
+			},
+			dataType:'json', // 将响应回来的字符串数据转换成json对象
+			success:function(res){
+				// 如果请求成功则会执行这里面的代码
+				// console.log(res);
+				// console.log(typeof res);
+				if(res.code==200){
+					$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+				}else {
+					$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+				}
+			}
+		})
+	 })
+
+
+	 // 3. 实现注册
+	 /**
+		* 1. 给注册按钮注册事件
+		* 2. 发送ajax请求
+		*	3. 获取form标签中的数据
+		* 4. 如果注册成功,则提示用户,还要清空form标签中的那些表单内容
+	  */
+
+		// 3.1 给按钮注册事件
+		$('.submit').on('click',function(){
+
+			// 3.7 阻止请求的继续发送
+			if($('.submit').hasClass('disabled')){
+				return ;// 阻止代码向下执行
+			}
+			var pass = $('.pass').val()
+			var repass = $('.repass').val()
+
+			// 3.2 发送ajax请求
+			$.ajax({
+				type:'post',
+				// url:'/register',
+				url:'/registerDelay', // 来模拟当前服务器端有延迟的情况  5秒后才会返回结果
+				// data:{
+				// 	// 3.3 准备发送的数据
+				// 	userName:$('.name').val(),
+				// 	pass:pass,
+				// 	mobile:$('.mobile').val(),
+				// 	code:$('.code').val()
+				// },
+				data:$('#ajaxForm').serialize(), // "name=tom&pass=123&repass=123&mobile=130123456"
+				// timeout:3000,
+				beforeSend:function(){
+					// 3.4 真正的发送请求之前要判断两次输入的密码是否一致
+					// 判断密码和重复输入的密码是否一致
+					if($.trim(pass)!==$.trim(repass)){
+						$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('密码和重复密码输入的不一致,请检查')
+						return false; // 阻止请求的发送
+					}
+
+					// 3.6 设置立即注册的禁用状态
+					$('.submit').addClass('disabled').val('正在注册中...')
+				},
+				dataType:'json', // 将接收到的json形式的字符串转换成真正的json对象
+				success:function(res){
+					// 3.5 注册成功之后要提示用户  失败也要提示
+					if(res.code==200){
+						$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+						// 把按钮恢复到原来的状态
+						$('.submit').removeClass('disabled').val('立即注册')
+						$('input[name]').val('')
+					}else {
+						$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html(res.msg)
+					}
+				},
+				error:function(){
+					$('.tips p').fadeIn(500).delay(2000).fadeOut(500).html('请求超时')
+				},
+				complete:function(){
+					// 把立即注册按钮恢复原状
+					$('.submit').removeClass('disabled').val('立即注册')
+				}
+			})
+		})
+
+
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>上传文件</title>
+</head>
+<body>
+  <!-- <input type="file" multiple> -->
+  <input type="file"><br/>
+  <img src="" alt="">
+  <script>
+    // 1. 获取上传文件的标签
+    var input = document.querySelector('input')
+
+    // 2. 给上传文件的按钮注册事件
+    input.onchange = function () {
+      // 只有选中了文件才会触发change事件
+      // console.log(123);
+      // console.log(this);
+      // console.dir(this.files[0]) // 通过this.files[0]来获取要上传的文件数据
+      // 必须将要上传的文件转换成二进制数据才可以上传成功
+      // 3. 准备FormData对象数据
+      var data = new FormData();
+      data.append('avatar', this.files[0])
+
+      // 4. 创建异步对象
+      var xhr = new XMLHttpRequest()
+      // 5. 设置请求行
+      xhr.open('post', 'http://127.0.0.1:3001/uploadFile')
+      // 5. 设置请求头
+      // xhr.setRequestormData Header('Content-Type','applicaton/x-www-form-urlencoded')
+      // 6. 设置请求体
+      xhr.send(data) // 此时是以二进制的数据格式来发送给服务器端
+      // 7. 监视异步对象的状态变化
+      xhr.onreadystatechange = function () {
+        if (xhr.status == 200 && xhr.readyState == 4) {
+          // console.log(xhr.responseText);
+          var obj =JSON.parse(xhr.responseText)
+
+          document.querySelector('img').src = obj.src 
+        }
+      }
+    }
+  </script>
+</body>
+</html>

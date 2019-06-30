@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>jQuery中Ajax的方式上传文件</title>
+</head>
+<body>
+  <input type="file"><br/>
+  <img src="" alt="">
+  <script src="/assets/js/jquery-1.12.2.js"></script>
+  <script>
+    // 1. 注册change事件
+    $('input').on('change',function(){
+
+      // 2. 准备上传的数据
+      var data = new FormData()
+      data.append('avatar',this.files[0])
+
+      // 3. 发送ajax请求
+      $.ajax({
+        type:'post',
+        url:'http://127.0.0.1:3001/uploadFile',
+        data: data,
+        dataType:'json',
+        contentType:false,// 当前上传的数据不要进行urlencoded编码因为是二进制数据
+        processData:false, // 将上传的数据不要进行字符串的拼接
+        success:function(res){
+          // console.log(res);
+          if(res.code==0){
+            $('img').attr('src',res.src)
+          }
+        }
+      })
+    })
+    /**
+     * 1. 使用FormData上传文件的时候，会将文件转换成二进制数据
+     * 2. 使用ajax上传的时候,如果是post请求,内部默认会使用请求头来设置urlendcoded编码
+     * 3. 二进制数据上传的时候，不需要进行urlencoded编码  contentType:false
+     * 4. ajax内部底层也不需要进行字符串拼接   processData:false
+     * 5. 其它方式都一样
+     **/
+  </script>
+</body>
+</html>

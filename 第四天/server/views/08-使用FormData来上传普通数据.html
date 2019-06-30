@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>使用FormData对象来上传数据</title>
+</head>
+
+<body>
+  <form id="myForm">
+    用户名: <input type="text" name="userName"><br />
+    密　码: <input type="text" name="userPwd"></br>
+    <input type="button" value="注册" id="btn">
+  </form>
+  <script>
+    // 1. 获取按钮标签
+    var btn = document.querySelector('#btn')
+    var form = document.querySelector('#myForm')
+
+    // 2. 给按钮注册事件
+    btn.onclick = function () {
+      // 准备上传的数据
+      var formData = new FormData(form) // 只能传DOM对象形式的form标签,不可以传jQuery对象形式的form形式
+      // 当new FormData的时候,会将会改诉form标签内的具有name属性的input select  textarea标签的值一并获取到
+      // 转换成二进制数据
+      formData.append('mobile', '13012345678')
+      formData.append('address', '天河区珠吉路58号')
+      // 3. 创建异步对象
+      var xhr = new XMLHttpRequest()
+      // 4. 设置请求行
+      xhr.open('post', 'http://127.0.0.1:3001/register')
+      // 5. 设置请求头
+      // xhr.setRequestormData Header('Content-Type','applicaton/x-www-form-urlencoded')
+      // 6. 设置请求体
+      xhr.send(formData) // 此时是以二进制的数据格式来发送给服务器端
+      // 7. 监视异步对象的状态变化
+      xhr.onreadystatechange = function () {
+        if (xhr.status == 200 && xhr.readyState == 4) {
+          console.log(xhr.responseText);
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
