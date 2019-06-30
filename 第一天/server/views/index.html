@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>异步请求体验</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 300px;
+      line-height: 300px;
+      background-color: orangered;
+      font-size: 80px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>开始学习ajax技术</h2>
+  <h2>感受ajax技术吧</h2>
+  <div class="box">0</div>
+  <input type="button" value="获取数据">
+  <ul>
+  </ul>
+  <script>
+    // 1.获取标签对象
+    var box = document.querySelector('.box')
+    var btn = document.querySelector('input')
+    var ul = document.querySelector('ul')
+    var num = 0
+    setInterval(function () {
+      num++
+      box.innerHTML = num
+    }, 1000);
+
+    // 2. 给按钮注册单击事件
+    btn.onclick = function name(params) {
+      // 3. 创建异步对象  因为要使用异步对象来发送请求 而且异步对象要遵循http协议
+      var xhr = new XMLHttpRequest()
+      // 4. 设置请求行
+      xhr.open('get', 'http://127.0.0.1:3001/getData')
+      // 有三个参数 第1个参数是请求的方式  第2个是请求的目标地址  第3个是否是异步 默认是异步
+      // 5. 设置请求头
+      // get的时候请求头可以省略
+      // 6. 设置请求体
+      xhr.send(null)  // 如果没有数据发送，则参数是一个null
+      // 7. 注册事件，监听异步对象的变化
+      xhr.onreadystatechange = function () {
+        // 一次成功的请求，至少包括这两部分
+        // 请求发送成功服务器端接收到请求，并做出了响应 以状态200以准  status
+        // 浏览器端要接收服务器端的响应,而且把所有的数据都接收到并能够进行处理 4  readyState
+        if (xhr.status == 200 && xhr.readyState == 4) {
+          console.log(xhr.responseText); // xhr.responseText来接收响应回来的数据  响应回来的数据格式是字符串
+          // console.log(typeof xhr.responseText); 
+          var obj = JSON.parse(xhr.responseText)
+          console.log(obj);
+          // console.log(typeof obj);
+          fn(obj.data)
+        }
+      }
+    }
+
+
+    function fn(arr) {
+      // 循环遍历data数组获取userName,显示在页面上
+      for (var i = 0; i < arr.length; i++) {
+        var li = document.createElement('li')
+        li.innerHTML = arr[i].userName
+        ul.appendChild(li);
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- action:表示要提交的目标地址 -->
+  <!-- method:表示请求的方式 -->
+  <!-- <form action="http://127.0.0.1:3001/submit" method="get"> -->
+  <form action="/submit" method="get">
+    用户名:<input type="text" name="userName" id="userName"><span></span><br />
+    密　码:<input type="text" name="userPwd"><br />
+    <input type="submit">
+  </form>
+  <script>
+    // 1. 获取标签对象
+    var userName = document.querySelector('#userName')
+
+    // 2. 给事件源注册失去事件
+    userName.onblur = function () {
+      // 3. 创建异步对象
+      var xhr = new XMLHttpRequest()
+
+      // 4. 设置请求行
+      xhr.open('get','http://127.0.0.1:3001/validate?userName='+this.value)
+
+      // 5. 设置请求头 
+      // 请求头其实是设置一种发送数据时的编码方式，因为get请求是通过URL拼接参数的形式发送，因此不需要设置请求头
+
+      // 6. 设置请求体
+      xhr.send(null)  // 因为get请求是通过URL拼接参数的形式发送，所以没有请求体，写一个null即可
+
+      // 7. 监视异步对象的状态 
+      xhr.onreadystatechange = function () {
+        if(xhr.status==200&&xhr.readyState==4){
+          // console.log(xhr.responseText);
+          userName.nextElementSibling.innerHTML = xhr.responseText;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
